@@ -1,4 +1,4 @@
-const Media = require("../models/mediaModel");
+const Media = require("../db/models/mediaModel");
 const cloudinary = require("../config/cloudinary");
 
 const uploadMedia = async (req, res) => {

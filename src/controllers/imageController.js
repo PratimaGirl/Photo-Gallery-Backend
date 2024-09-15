@@ -1,5 +1,5 @@
 // src/controllers/imageController.js
-const Image = require("../models/imageModel");
+const Image = require("../db/models/imageModel");
 const cloudinary = require("../config/cloudinary");
 
 // Upload image
@@ -10,7 +10,9 @@ const uploadImage = async (req, res) => {
     }
     const b64 = Buffer.from(req.file.buffer).toString("base64");
     let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
-    const cldRes = await cloudinary.uploader.upload(dataURI, { resource_type: "auto" });
+    const cldRes = await cloudinary.uploader.upload(dataURI, {
+      resource_type: "auto",
+    });
 
     const newImage = new Image({
       url: cldRes.secure_url,
@@ -19,7 +21,7 @@ const uploadImage = async (req, res) => {
       description: req.body.description,
     });
     await newImage.save();
-    
+
     res.json(cldRes);
   } catch (error) {
     console.error("Upload error:", error);
@@ -63,12 +65,12 @@ const updateImage = async (req, res) => {
 
   try {
     let updatedImage = { title, description };
-    
+
     if (newFile) {
       const b64 = Buffer.from(newFile.buffer).toString("base64");
       const dataURI = `data:${newFile.mimetype};base64,${b64}`;
       const cloudinaryResponse = await cloudinary.uploader.upload(dataURI);
-      
+
       await cloudinary.uploader.destroy(public_id); // Remove old image
       updatedImage = {
         ...updatedImage,
